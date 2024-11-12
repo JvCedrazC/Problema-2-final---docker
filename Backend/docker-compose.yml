@@ -1,0 +1,46 @@
+version: '3.8=9'
+
+services:
+  node1:
+    build: C:\Users\kmbma\OneDrive\Área de Trabalho\Redes\Problema 2 final - docker\Backend\Servidor1  # Caminho do Dockerfile do Node 1
+    container_name: node1
+    ports:
+      - "8080:8080"  # Porta para o Flask
+      - "8083:8083"  # Porta do Socket
+      - "8084:8084"  # Porta do Socket para comunicação com o Node2
+    networks:
+      - app-network
+    environment:
+      - FLASK_ENV=development
+    depends_on:
+      - node2
+
+  node2:
+    build: C:\Users\kmbma\OneDrive\Área de Trabalho\Redes\Problema 2 final - docker\Backend\Servidor2  # Caminho do Dockerfile do Node 2
+    container_name: node2
+    ports:
+      - "8081:8081"  # Porta para o Flask
+      - "8085:8085"  # Porta do Socket
+      - "8086:8086"  # Porta do Socket para comunicação com o Node3
+    networks:
+      - app-network
+    environment:
+      - FLASK_ENV=development
+    depends_on:
+      - node3
+
+  node3:
+    build: C:\Users\kmbma\OneDrive\Área de Trabalho\Redes\Problema 2 final - docker\Backend\Servidor3  # Caminho do Dockerfile do Node 3
+    container_name: node3
+    ports:
+      - "8082:8082"  # Porta para o Flask
+      - "8087:8087"  # Porta do Socket
+      - "8088:8088"  # Porta do Socket para comunicação com o Node1
+    networks:
+      - app-network
+    environment:
+      - FLASK_ENV=development
+
+networks:
+  app-network:
+    driver: bridge
