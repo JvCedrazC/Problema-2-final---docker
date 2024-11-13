@@ -25,26 +25,78 @@ A arquitetura é **cliente-servidor distribuída**, com múltiplos servidores qu
 
 O sistema usa **APIs RESTful** para a comunicação entre os componentes desenvolvidos. Abaixo estão descritos os principais métodos remotos, parâmetros e retornos envolvidos no processo de compra de passagens:
 
-1. **Verificar Passagens Disponíveis**:
+### Endpoints
+
+1. **Verificar Passagens Disponíveis**
    - **Método**: `POST /api/rota`
+   - **Descrição**: Este endpoint é utilizado para consultar as rotas disponíveis entre uma cidade de origem e um destino.
    - **Parâmetros**:
-     - `origem`: Cidade de origem.
-     - `destino`: Cidade de destino.
+     - `origem`: Nome da cidade de origem (ex.: "Barreiras").
+     - `destino`: Nome da cidade de destino (ex.: "Salvador").
+   - **Exemplo de Requisição**:
+     ```json
+     {
+       "origem": "Barreiras",
+       "destino": "Salvador"
+     }
+     ```
    - **Retorno**:
      - `rotas`: Lista de rotas disponíveis com as respectivas passagens.
+     - **Exemplo de Resposta**:
+     ```json
+     {
+       "rotas": [
+         {
+           "id": 1,
+           "origem": "Barreiras",
+           "destino": "Salvador",
+           "quantidade_disponivel": 5
+         },
+         {
+           "id": 2,
+           "origem": "Barreiras",
+           "destino": "Salvador",
+           "quantidade_disponivel": 3
+         }
+       ]
+     }
+     ```
 
-2. **Comprar Passagem**:
+2. **Comprar Passagem**
    - **Método**: `POST /api/comprar`
+   - **Descrição**: Este endpoint permite a compra de uma passagem, realizando o bloqueio da passagem e atualizando a quantidade de passagens disponíveis.
    - **Parâmetros**:
-     - `rota`: Nome da rota escolhida.
+     - `rota_id`: ID da rota que o cliente deseja comprar.
+   - **Exemplo de Requisição**:
+     ```json
+     {
+       "rota_id": 1
+     }
+     ```
    - **Retorno**:
-     - `success`: Booleano que indica se a compra foi bem-sucedida.
+     - `success`: Booleano indicando se a compra foi bem-sucedida.
      - `remaining`: Número de passagens restantes para a rota.
+     - **Exemplo de Resposta**:
+     ```json
+     {
+       "success": true,
+       "remaining": 4
+     }
+     ```
 
-3. **Verificação de Token**:
+3. **Verificação de Token**
    - **Método**: `GET /api/verificar_token`
+   - **Descrição**: Este endpoint verifica se o cliente possui um token válido para realizar a compra. O token é utilizado para garantir que o cliente não tente comprar passagens em uma rota já ocupada por outro cliente.
+   - **Exemplo de Requisição**:
+     Não há parâmetros, pois o sistema verifica o token automaticamente para cada cliente.
    - **Retorno**:
      - `has_token`: Booleano que indica se o cliente possui um token válido para realizar a compra.
+     - **Exemplo de Resposta**:
+     ```json
+     {
+       "has_token": true
+     }
+     ```
 
 ---
 
@@ -78,12 +130,6 @@ Além disso, o sistema utiliza um **algoritmo de Token Ring** para coordenar o a
 A solução foi projetada para garantir confiabilidade mesmo diante de falhas de rede ou desconexões temporárias. Ao desconectar e reconectar os servidores das companhias, o sistema continua garantindo a concorrência distribuída e a finalização das compras anteriormente iniciadas por um cliente.
 
 A comunicação entre os servidores e o cliente é robusta, e o sistema é capaz de manter os dados de transações consistentes, mesmo durante falhas intermitentes.
-
----
-
-## Avaliação da Solução
-
-A solução foi desenvolvida e mantida no **GitHub**, e testes de consistência e desempenho foram realizados em condições críticas. A partir do repositório, é possível acessar os scripts de testes que simulam cenários de alto tráfego e falhas de rede para verificar o comportamento do sistema em situações extremas.
 
 ---
 
